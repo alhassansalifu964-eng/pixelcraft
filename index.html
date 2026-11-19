@@ -1,0 +1,136 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PixelCraft - Build Together</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial;background:#101827;color:white}
+header{text-align:center;padding:25px;background:#17243b}
+h1{color:#48a5ff;margin:5px}
+p{color:#cbd5e1}
+main{max-width:900px;margin:auto;padding:18px}
+.card{background:#1e2c43;padding:18px;border-radius:14px;margin-bottom:18px}
+input,select,button{padding:12px;border-radius:8px;border:0;margin:5px;max-width:100%}
+button{background:#1684ee;color:white;font-weight:bold}
+button:active{opacity:.7}
+#board{display:grid;grid-template-columns:repeat(40,1fr);gap:2px;background:#334155;padding:5px;border-radius:8px}
+.pixel{aspect-ratio:1;background:#e2e8f0;border:0;padding:0;margin:0;border-radius:1px;min-width:0}
+.pixel.owned{cursor:not-allowed}
+.stats{display:flex;justify-content:space-around;flex-wrap:wrap;gap:10px}
+.stat{font-size:18px;font-weight:bold}
+small{color:#aabbd0}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🎨 PIXELCRAFT</h1>
+<p>Build Together. Create History.</p>
+</header>
+
+<main>
+<div class="card">
+<h2>Welcome to PixelCraft!</h2>
+<p>Buy a pixel, choose its colour and leave your mark on the internet.</p>
+<div class="stats">
+<div class="stat">💰 GH₵1 <small>/ pixel</small></div>
+<div class="stat">🟦 1,000 <small>pixels</small></div>
+<div class="stat">🌍 Everyone welcome</div>
+</div>
+</div>
+
+<div class="card">
+<h3>Choose your pixel</h3>
+<input id="username" placeholder="Your display name">
+<br>
+<label>Choose colour:</label>
+<input type="color" id="colour" value="#1684ee">
+<p>Tap any available pixel on the board.</p>
+<div id="selected">Selected pixels: 0</div>
+<div id="board"></div>
+<br>
+<div id="total">Total: GH₵0</div>
+<button onclick="checkout()">Continue to payment</button>
+<button onclick="clearSelection()">Clear selection</button>
+</div>
+
+<div class="card">
+<h3>How it works</h3>
+<p>1. Enter your display name.</p>
+<p>2. Choose a colour.</p>
+<p>3. Select available pixels.</p>
+<p>4. Review your selection.</p>
+<p>5. Complete payment when live payment integration is enabled.</p>
+</div>
+
+<div class="card">
+<h3>About PixelCraft</h3>
+<p>One pixel at a time, we build something amazing together.</p>
+<p>Payment method planned: MTN Mobile Money.</p>
+<small>PixelCraft © 2026</small>
+</div>
+</main>
+
+<script>
+const board=document.getElementById("board");
+const selected=document.getElementById("selected");
+const total=document.getElementById("total");
+let chosen=new Set();
+let pixels=JSON.parse(localStorage.getItem("pixelcraft_pixels")||"{}");
+
+function update(){
+selected.textContent="Selected pixels: "+chosen.size;
+total.textContent="Total: GH₵"+chosen.size;
+}
+
+function render(){
+board.innerHTML="";
+for(let i=0;i<1000;i++){
+let b=document.createElement("button");
+b.className="pixel";
+b.type="button";
+b.title="Pixel "+(i+1);
+
+if(pixels[i]){
+b.style.background=pixels[i].colour;
+b.classList.add("owned");
+b.disabled=true;
+}else{
+b.style.background=chosen.has(i)?"#facc15":"#e2e8f0";
+b.onclick=()=>{
+if(chosen.has(i))chosen.delete(i);
+else chosen.add(i);
+render();
+update();
+};
+}
+board.appendChild(b);
+}
+}
+
+function clearSelection(){
+chosen.clear();
+render();
+update();
+}
+
+function checkout(){
+let name=document.getElementById("username").value.trim();
+if(!name){alert("Please enter your display name.");return;}
+if(chosen.size===0){alert("Please select at least one pixel.");return;}
+
+alert("Demo checkout\nName: "+name+
+"\nPixels: "+chosen.size+
+"\nTotal: GH₵"+chosen.size+
+"\n\nLive MTN MoMo payment is not connected yet. No payment has been taken.");
+}
+
+render();
+update();
+</script>
+</body>
+  </html>
+  
